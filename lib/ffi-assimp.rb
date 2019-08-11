@@ -1,6 +1,6 @@
 require "ffi"
 
-module Assimp
+class Assimp
   extend FFI::Library
 
   # http://assimp.sourceforge.net/lib_html/cimport_8h.html#a09fe8ba0c8e91bf04b4c29556be53b6d
@@ -28,9 +28,21 @@ module Assimp
                   FLAG_aiProcess_LimitBoneWeights |
                   0
 
-  module_function
+  attr_reader :path, :flags
 
-  def opengl_mat4(t)
+  def initialize(path, flags = DEFAULT_FLAGS)
+    @path = path
+    @flags = flags
+  end
+
+  def open
+    scene = Assimp::Scene.new(Assimp.aiImportFile(path, flags))
+    yield scene unless scene.null?
+  ensure
+    Assimp.aiReleaseImport(scene)
+  end
+
+  def self.opengl_mat4(t)
     [
       t[0], t[4], t[8], t[12],
       t[1], t[5], t[9], t[13],
@@ -39,13 +51,7 @@ module Assimp
     ]
   end
 
-  def open_file(path, flags = DEFAULT_FLAGS)
-    scene_pointer = Assimp.aiImportFile(path, flags)
-    scene = Assimp::Scene.new(scene_pointer)
-    yield scene unless scene.null?
-  ensure
-    Assimp.aiReleaseImport(scene)
-  end
+  private
 
   class Face < FFI::Struct
     layout(
