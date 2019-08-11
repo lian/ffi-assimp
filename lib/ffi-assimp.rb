@@ -44,6 +44,7 @@ module Assimp
     scene = Assimp::Scene.new(scene_pointer)
     root_node = Assimp::Node.new(scene[:node])
     yield scene, root_node
+  ensure
     Assimp.aiReleaseImport(scene)
   end
 
