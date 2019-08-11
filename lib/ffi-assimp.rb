@@ -462,6 +462,26 @@ module Assimp
       end
     end
 
+    def sizes
+      @sizes ||= begin
+        return unless meshes
+
+        vertices = meshes.flat_map(&:vertices)
+        x_min, x_max = vertices.map { |x, _, _| x }.minmax
+        y_min, y_max = vertices.map { |_, y, _| y }.minmax
+        z_min, z_max = vertices.map { |_, _, z| z }.minmax
+
+        {
+          x_max: x_max,
+          y_max: y_max,
+          z_max: z_max,
+          x_min: x_min,
+          y_min: y_min,
+          z_min: z_min,
+        }
+      end
+    end
+
     def animations
       return [] unless self[:num_animations] > 0
 
