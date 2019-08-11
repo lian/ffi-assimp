@@ -40,7 +40,7 @@ module Assimp
   end
 
   def open_file(path, flags = DEFAULT_FLAGS)
-    scene_pointer = Assimp.aiImportFile(path, Assimp::DEFAULT_FLAGS)
+    scene_pointer = Assimp.aiImportFile(path, flags)
     scene = Assimp::Scene.new(scene_pointer)
     root_node = Assimp::Node.new(scene[:node])
     yield scene, root_node
