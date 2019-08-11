@@ -42,8 +42,7 @@ module Assimp
   def open_file(path, flags = DEFAULT_FLAGS)
     scene_pointer = Assimp.aiImportFile(path, flags)
     scene = Assimp::Scene.new(scene_pointer)
-    root_node = Assimp::Node.new(scene[:node])
-    yield scene, root_node
+    yield scene 
   ensure
     Assimp.aiReleaseImport(scene)
   end
@@ -488,6 +487,10 @@ module Assimp
       self[:animations]
         .get_array_of_pointer(0, self[:num_animations])
         .map { |pointer| Animation.new(pointer) }
+    end
+
+    def root_node
+      Assimp::Node.new(self[:node])
     end
   end
 
