@@ -42,7 +42,7 @@ module Assimp
   def open_file(path, flags = DEFAULT_FLAGS)
     scene_pointer = Assimp.aiImportFile(path, flags)
     scene = Assimp::Scene.new(scene_pointer)
-    yield scene 
+    yield scene unless scene.null?
   ensure
     Assimp.aiReleaseImport(scene)
   end
